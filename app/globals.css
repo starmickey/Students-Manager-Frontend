@@ -63,8 +63,9 @@
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --border: var(--foreground)
+    /* oklch(0.922 0 0);*/
+    --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -111,14 +112,16 @@
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-border: var(--foreground),
+    /*oklch(1 0 0 / 10%);*/
+    --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -127,42 +130,48 @@
 /* Headings scale */
 
 h1 {
-  font-size: 2.5rem;   /* ~40px */
+  font-size: 2.5rem;
+  /* ~40px */
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 0.75rem;
 }
 
 h2 {
-  font-size: 2rem;     /* ~32px */
+  font-size: 2rem;
+  /* ~32px */
   font-weight: 600;
   line-height: 1.25;
   margin-bottom: 0.65rem;
 }
 
 h3 {
-  font-size: 1.75rem;  /* ~28px */
+  font-size: 1.75rem;
+  /* ~28px */
   font-weight: 600;
   line-height: 1.3;
   margin-bottom: 0.6rem;
 }
 
 h4 {
-  font-size: 1.5rem;   /* ~24px */
+  font-size: 1.5rem;
+  /* ~24px */
   font-weight: 600;
   line-height: 1.35;
   margin-bottom: 0.5rem;
 }
 
 h5 {
-  font-size: 1.25rem;  /* ~20px */
+  font-size: 1.25rem;
+  /* ~20px */
   font-weight: 500;
   line-height: 1.4;
   margin-bottom: 0.4rem;
 }
 
 h6 {
-  font-size: 1rem;     /* ~16px */
+  font-size: 1rem;
+  /* ~16px */
   font-weight: 500;
   line-height: 1.4;
   margin-bottom: 0.3rem;
@@ -170,9 +179,36 @@ h6 {
 
 /* Form */
 
-.form {
-  min-height: 100vh;
+body:has(.form-page) {
+  background-color: var(--muted);
+}
+
+.form-page {
+  background-color: var(--muted);
   padding: 2rem;
+  height: 100dvh;
+}
+
+@media (max-width: 639px) {
+  .form-page {
+    background-color: var(--background);
+  }
+}
+
+.form {
+  width: 100%;
+}
+
+@media (min-width: 639px) {
+  .form {
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    margin: auto;
+    padding: 1rem;
+    max-width: 450px;
+    box-shadow: oklch(1 0 0);
+  }
 }
 
 .form h1 {
@@ -196,7 +232,11 @@ h6 {
 }
 
 @media (max-width: 639px) {
-  .status-screen > * {
+  .status-screen>* {
     width: 100%;
   }
+}
+
+.admin-page {
+  padding: 2rem;
 }

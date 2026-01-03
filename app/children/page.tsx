@@ -1,3 +1,24 @@
-export default function Page() {
-  return <section>children</section>;
+import ChildrenTable from "@/features/children/components/children-table";
+
+interface PageProps {
+  searchParams?: {
+    page?: string;
+    sortBy?: string;
+    order?: "asc" | "desc";
+  };
+}
+
+export default async function Page({ searchParams }: PageProps) {
+  const params = await searchParams;
+
+  const page = Number(params?.page ?? "1");
+  const sortBy = params?.sortBy ?? "name";
+  const order = params?.order ?? "asc";
+
+  return (
+    <main className="admin-page">
+      <h1>Children</h1>
+      <ChildrenTable page={page} pageSize={15} sortBy={sortBy} order={order} />
+    </main>
+  );
 }

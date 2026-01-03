@@ -1,9 +1,12 @@
-import RegisterChildForm from "./components/register-child-form";
+import RegisterChildForm from "../../../features/children/components/register-child-form";
 
 export default function Page() {
   return (
-      <main>
+    <main className="form-page">
+      <div className="form">
+        <h1>Register</h1>
         <RegisterChildForm />
-      </main>
+      </div>
+    </main>
   );
 }

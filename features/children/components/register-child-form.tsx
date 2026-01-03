@@ -1,5 +1,6 @@
 "use client";
 
+import SuccessScreen from "@/components/templates/success-screen";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,16 +11,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useRegisterChild } from "@/features/children/hooks/use-register-child";
 import {
   RegisterChildInput,
   registerChildSchema,
-} from "../schemas/register-child-schema";
-import { useRegisterChild } from "../hooks/use-register-child";
+} from "@/features/children/schemas/register-child-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+
+type State = "form" | "success";
 
 export default function RegisterChildForm() {
   const { submit, loading } = useRegisterChild();
+  const [state, setState] = useState<State>("form");
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const form = useForm<RegisterChildInput>({
     resolver: zodResolver(registerChildSchema),
@@ -27,18 +33,32 @@ export default function RegisterChildForm() {
       name: "",
       surname: "",
       birthDay: undefined,
-      dni: "",
-      address: "",
+      dni: undefined,
+      address: undefined,
     },
   });
 
   async function onSubmit(values: RegisterChildInput) {
-    await submit(values);
-    form.reset();
+    try {
+      await submit(values).then((res) => console.log("Child created", res));
+      form.reset();
+      setState("success");
+    } catch (error) {
+      setState("form");
+      setError(
+        String(error) ?? "There was an unexpected error. Try again later."
+      );
+    }
+  }
+
+  if (state === "success") {
+    return <SuccessScreen />;
   }
 
   return (
     <Form {...form}>
+      {error && <p className="text-destructive text-sm my-4">{error}</p>}
+
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
@@ -128,7 +148,8 @@ export default function RegisterChildForm() {
             </FormItem>
           )}
         />
-        <Button>Save</Button>
+
+        <Button className="w-full mt-6">Register</Button>
       </form>
     </Form>
   );
