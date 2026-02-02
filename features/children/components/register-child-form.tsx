@@ -32,9 +32,9 @@ export default function RegisterChildForm() {
     defaultValues: {
       name: "",
       surname: "",
-      birthDay: undefined,
-      dni: undefined,
-      address: undefined,
+      birthDay: undefined as unknown as Date,
+      dni: undefined as unknown as string,
+      address: undefined as unknown as string,
     },
   });
 
@@ -57,6 +57,8 @@ export default function RegisterChildForm() {
 
   return (
     <Form {...form}>
+      <h1>Register</h1>
+      
       {error && <p className="text-destructive text-sm my-4">{error}</p>}
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -126,7 +128,7 @@ export default function RegisterChildForm() {
             <FormItem>
               <FormLabel>DNI</FormLabel>
               <FormControl>
-                <Input placeholder="12345678" {...field} />
+                <Input placeholder="12345678" type="number" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

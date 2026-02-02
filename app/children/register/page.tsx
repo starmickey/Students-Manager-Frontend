@@ -1,12 +1,12 @@
+import FormContainer from "@/components/layout/FormContainer";
 import RegisterChildForm from "../../../features/children/components/register-child-form";
 
 export default function Page() {
   return (
-    <main className="form-page">
-      <div className="form">
-        <h1>Register</h1>
+    <main>
+      <FormContainer>
         <RegisterChildForm />
-      </div>
+      </FormContainer>
     </main>
   );
 }
