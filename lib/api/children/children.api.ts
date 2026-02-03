@@ -1,3 +1,5 @@
+"use server";
+
 import {
   RegisterChildInput,
   UpdateChildFieldInput,
@@ -6,28 +8,56 @@ import {
 import { http } from "../../http/http-client";
 import type { Child, ChildApi } from "./children.types";
 import { parseChildApi } from "./children.mappers";
+import { PaginatedResponse } from "../shared/pagination.types";
 
-export function registerChild(input: RegisterChildInput) {
+interface GetChildrenProps {
+  page: number;
+  pageSize: number;
+  sortBy: string;
+  order: "asc" | "desc";
+}
+
+export async function getChildren({
+  page,
+  pageSize,
+  sortBy,
+  order,
+}: GetChildrenProps) {
+  return http<PaginatedResponse<Child>>(
+    `/children?page=${page}&pageSize=${pageSize}&sortBy=${sortBy}&order=${order}`
+  );
+}
+
+export async function getChildById(id: number) {
+  return http<ChildApi>(`/children/${id}`).then((res) => parseChildApi(res));
+}
+
+export async function registerChild(input: RegisterChildInput) {
   return http<Child, RegisterChildInput>("/children", {
     method: "POST",
     body: input,
   });
 }
 
-export function updateChild({ id, ...input }: UpdateChildInput) {
+export async function updateChild({ id, ...input }: UpdateChildInput) {
   return http<Child, Omit<UpdateChildInput, "id">>(`/children/${id}`, {
     method: "PUT",
     body: input,
   });
 }
 
-export function updateChildField({ id, ...input }: UpdateChildFieldInput) {
+export async function updateChildField({
+  id,
+  ...input
+}: UpdateChildFieldInput) {
   return http<Child, Omit<UpdateChildFieldInput, "id">>(`/children/${id}`, {
     method: "PATCH",
     body: input,
   });
 }
 
-export function getChildById(id: number) {
-  return http<ChildApi>(`/children/${id}`).then((res) => parseChildApi(res));
+export async function deleteChild(id: number) {
+  return http<number, void>(`/children/${id}`, {
+    method: "DELETE",
+  });
 }

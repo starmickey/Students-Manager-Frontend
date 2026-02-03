@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Child, updateChildField } from "@/lib/api/children";
+import { Child, deleteChild, updateChildField } from "@/lib/api/children";
 import {
   ColumnDef,
   flexRender,
@@ -52,12 +52,13 @@ export default function ChildrenTable({
 
   const sorting: SortingState = [{ id: sortBy, desc: order === "desc" }];
 
-  const { data, pagination, loading, loadingTime, error } = useChildren({
-    page,
-    pageSize,
-    sortBy,
-    order,
-  });
+  const { data, pagination, loading, loadingTime, error, refresh } =
+    useChildren({
+      page,
+      pageSize,
+      sortBy,
+      order,
+    });
 
   const columns: ColumnDef<Child>[] = [
     {
@@ -123,8 +124,11 @@ export default function ChildrenTable({
       id: "delete",
       header: "",
       enableSorting: false,
-      cell: () => (
-        <Button variant="ghost">
+      cell: ({ row }) => (
+        <Button
+          variant="ghost"
+          onClick={() => deleteChild(row.original.id).then(() => refresh())}
+        >
           <TrashIcon className="h-4 w-4" />
         </Button>
       ),

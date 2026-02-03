@@ -25,5 +25,12 @@ export async function http<TResponse, TBody = unknown>(
     throw new HttpError(res.status, payload?.error ?? res.statusText, payload);
   }
 
-  return res.json();
+  // Handle 204 No Content
+  if (res.status === 204) {
+    return undefined as unknown as TResponse;
+  }
+
+  // If response has content, parse JSON
+  const text = await res.text();
+  return text ? JSON.parse(text) : (undefined as unknown as TResponse);
 }
