@@ -1,5 +1,7 @@
 "use client";
 
+import { EditableCell } from "@/components/templates/tables/editable-cell";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -16,18 +18,17 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { useChildren } from "../hooks/use-children";
-import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
-
-import { EditableInput } from "@/components/ui/editable-input";
+import { useState } from "react";
+import z from "zod";
+import { useChildren } from "../hooks/use-children";
 import {
   UpdateChildFieldInput,
   updateChildFieldSchema,
 } from "../schemas/children.schema";
-import { EditableCell } from "@/components/templates/tables/editable-cell";
-import { useState } from "react";
-import z from "zod";
+import { RiPencilFill as PencilIcon } from "react-icons/ri";
+import { FaTrashAlt as TrashIcon } from "react-icons/fa";
+import Link from "next/link";
 
 interface ChildrenTableProps {
   page: number;
@@ -104,6 +105,30 @@ export default function ChildrenTable({
           onSubmit={handleUpdateCell}
         />
       ),
+    },
+    {
+      id: "edit",
+      header: "",
+      enableSorting: false,
+      cell: ({ row }) => (
+        <Link href={`/children/${row.original.id}`}>
+          <Button variant="ghost">
+            <PencilIcon className="h-4 w-4" />
+          </Button>
+        </Link>
+      ),
+      size: 32,
+    },
+    {
+      id: "delete",
+      header: "",
+      enableSorting: false,
+      cell: () => (
+        <Button variant="ghost">
+          <TrashIcon className="h-4 w-4" />
+        </Button>
+      ),
+      size: 32,
     },
   ];
 

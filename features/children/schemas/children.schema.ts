@@ -5,12 +5,17 @@ export const registerChildSchema = z.object({
   surname: z
     .string("Surname must be a valid string")
     .min(1, "Surname cannot be empty"),
-  birthDay: z.date("Birth date must be a valid date").optional(),
+  birthDay: z.date("Birth date must be a valid date").nullable().optional(),
   dni: z
     .string("DNI must be a text value")
     .min(6, "DNI must have at least 6 characters")
+    .nullable()
     .optional(),
-  address: z.string("Address must be a text value").optional(),
+  address: z.string("Address must be a text value").nullable().optional(),
+});
+
+export const updateChildSchema = registerChildSchema.extend({
+  id: z.number("Id must be a valid number"),
 });
 
 export const updateChildFieldSchema = z.object({
@@ -46,4 +51,5 @@ export const updateChildFieldSchema = z.object({
 });
 
 export type RegisterChildInput = z.infer<typeof registerChildSchema>;
+export type UpdateChildInput = z.infer<typeof updateChildSchema>;
 export type UpdateChildFieldInput = z.infer<typeof updateChildFieldSchema>;

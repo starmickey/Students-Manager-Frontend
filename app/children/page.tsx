@@ -20,6 +20,7 @@ export default async function Page({ searchParams }: PageProps) {
   return (
     <main className="admin-page">
       <h1>Children</h1>
+      
       <div className="flex justify-end">
         <Link href="/children/register">
           <Button
@@ -31,6 +32,7 @@ export default async function Page({ searchParams }: PageProps) {
           </Button>
         </Link>
       </div>
+
       <ChildrenTable page={page} pageSize={15} sortBy={sortBy} order={order} />
     </main>
   );

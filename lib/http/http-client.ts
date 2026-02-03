@@ -1,4 +1,5 @@
 import { env } from "../config/env";
+import { HttpError } from "./http-errors";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -9,19 +10,19 @@ interface RequestOptions<TBody> {
 
 export async function http<TResponse, TBody = unknown>(
   path: string,
-  options: RequestOptions<TBody>
+  options?: RequestOptions<TBody>
 ): Promise<TResponse> {
   const res = await fetch(`${env.API_BASE_URL}${path}`, {
-    method: options.method,
+    method: options?.method ?? "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    body: options?.body ? JSON.stringify(options.body) : undefined,
   });
 
   if (!res.ok) {
     const payload = await res.json().catch(() => null);
-    throw new Error(payload?.error ?? "Unexpected error");
+    throw new HttpError(res.status, payload?.error ?? res.statusText, payload);
   }
 
   return res.json();

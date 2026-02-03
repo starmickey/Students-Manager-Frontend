@@ -1,11 +1,11 @@
 import FormContainer from "@/components/layout/FormContainer";
-import RegisterChildForm from "../../../features/children/components/register-child-form";
+import UpdateChildForm from "../../../features/children/components/update-child-form";
 
 export default function Page() {
   return (
     <main>
       <FormContainer>
-        <RegisterChildForm />
+        <UpdateChildForm mode="create" />
       </FormContainer>
     </main>
   );
