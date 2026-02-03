@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Child } from "@/lib/api/children";
+import { Child, updateChildField } from "@/lib/api/children";
 import {
   ColumnDef,
   flexRender,
@@ -20,26 +20,14 @@ import { useChildren } from "../hooks/use-children";
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
 
-export const columns: ColumnDef<Child, Child>[] = [
-  {
-    header: "Name",
-    accessorKey: "name",
-  },
-  {
-    header: "Surname",
-    accessorKey: "surname",
-  },
-  {
-    header: "Birth Day",
-    accessorKey: "birthDay",
-    cell: ({ getValue }) => getValue<string>() ?? "—",
-  },
-  {
-    header: "DNI",
-    accessorKey: "dni",
-    cell: ({ getValue }) => getValue<string>() ?? "—",
-  },
-];
+import { EditableInput } from "@/components/ui/editable-input";
+import {
+  UpdateChildFieldInput,
+  updateChildFieldSchema,
+} from "../schemas/children.schema";
+import { EditableCell } from "@/components/templates/tables/editable-cell";
+import { useState } from "react";
+import z from "zod";
 
 interface ChildrenTableProps {
   page: number;
@@ -57,6 +45,10 @@ export default function ChildrenTable({
   const router = useRouter();
   const pathname = usePathname();
 
+  const [globalErrors, setGlobalErrors] = useState<string | undefined>(
+    undefined
+  );
+
   const sorting: SortingState = [{ id: sortBy, desc: order === "desc" }];
 
   const { data, pagination, loading, loadingTime, error } = useChildren({
@@ -65,6 +57,55 @@ export default function ChildrenTable({
     sortBy,
     order,
   });
+
+  const columns: ColumnDef<Child>[] = [
+    {
+      header: "Name",
+      accessorKey: "name",
+      cell: ({ row }) => (
+        <EditableCell
+          row={row.original}
+          field="name"
+          onSubmit={handleUpdateCell}
+        />
+      ),
+    },
+    {
+      header: "Surname",
+      accessorKey: "surname",
+      cell: ({ row }) => (
+        <EditableCell
+          row={row.original}
+          field="surname"
+          onSubmit={handleUpdateCell}
+        />
+      ),
+    },
+    {
+      header: "Birth Day",
+      accessorKey: "birthDay",
+      cell: ({ row }) => (
+        <EditableCell
+          row={row.original}
+          field="birthDay"
+          type="date"
+          onSubmit={handleUpdateCell}
+        />
+      ),
+    },
+    {
+      header: "DNI",
+      accessorKey: "dni",
+      cell: ({ row }) => (
+        <EditableCell
+          row={row.original}
+          field="dni"
+          type="number"
+          onSubmit={handleUpdateCell}
+        />
+      ),
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -94,9 +135,25 @@ export default function ChildrenTable({
     router.push(`${pathname}?${query.toString()}`);
   }
 
+  async function handleUpdateCell(data: UpdateChildFieldInput) {
+    const result = updateChildFieldSchema.safeParse(data);
+
+    if (!result.success) {
+      setGlobalErrors(z.prettifyError(result.error));
+      console.error(result.error);
+      return;
+    }
+
+    updateChildField(result.data).catch((error) => {
+      setGlobalErrors("There was an unexpected error. Try again later.");
+      console.error(error);
+    });
+  }
+
   return (
     <div className="space-y-4">
       {error && <p className="text-destructive">{error}</p>}
+      {globalErrors && <p className="text-destructive">{globalErrors}</p>}
 
       <Table>
         <TableHeader>

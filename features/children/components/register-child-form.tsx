@@ -15,7 +15,7 @@ import { useRegisterChild } from "@/features/children/hooks/use-register-child";
 import {
   RegisterChildInput,
   registerChildSchema,
-} from "@/features/children/schemas/register-child-schema";
+} from "@/features/children/schemas/children.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -40,7 +40,7 @@ export default function RegisterChildForm() {
 
   async function onSubmit(values: RegisterChildInput) {
     try {
-      await submit(values).then((res) => console.log("Child created", res));
+      await submit(values);
       form.reset();
       setState("success");
     } catch (error) {

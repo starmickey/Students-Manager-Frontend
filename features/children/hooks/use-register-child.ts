@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { registerChild } from "@/lib/api/children";
-import type { RegisterChildInput } from "@/lib/api/children";
+import { RegisterChildInput } from "../schemas/children.schema";
 
 export function useRegisterChild() {
   const [loading, setLoading] = useState(false);
