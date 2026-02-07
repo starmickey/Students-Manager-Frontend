@@ -112,7 +112,7 @@ export default function ChildrenTable({
       header: "",
       enableSorting: false,
       cell: ({ row }) => (
-        <Link href={`/children/${row.original.id}`}>
+        <Link href={`/admin/children/${row.original.id}`}>
           <Button variant="ghost">
             <PencilIcon className="h-4 w-4" />
           </Button>

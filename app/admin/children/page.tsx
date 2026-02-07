@@ -22,7 +22,7 @@ export default async function Page({ searchParams }: PageProps) {
       <h1>Children</h1>
       
       <div className="flex justify-end">
-        <Link href="/children/register">
+        <Link href="/admin/children/register">
           <Button
             type="button"
             aria-label="Register a new child"

@@ -28,7 +28,11 @@ export default async function Page({
   return (
     <main>
       <FormContainer>
-        <UpdateChildForm mode="edit" child={child} />
+        <UpdateChildForm
+          mode="edit"
+          child={child}
+          successRedirectPath={`/admin/children/${id}/success`}
+        />
       </FormContainer>
     </main>
   );

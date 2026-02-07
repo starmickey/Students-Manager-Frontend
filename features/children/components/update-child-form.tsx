@@ -1,6 +1,5 @@
 "use client";
 
-import SuccessScreen from "@/components/templates/success-screen";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,11 +17,10 @@ import {
 } from "@/features/children/schemas/children.schema";
 import { Child } from "@/lib/api/children";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-
-type State = "form" | "success";
 
 const creationDefaultValues = {
   name: "",
@@ -32,22 +30,32 @@ const creationDefaultValues = {
   address: null,
 };
 
-interface CreateChildForm {
+interface BaseProps {
+  onSuccess?: (c: Child) => void;
+  successRedirectPath?: string;
+}
+
+interface CreateChildForm extends BaseProps {
   mode: "create";
   child?: never;
 }
 
-interface EditChildForm {
+interface EditChildForm extends BaseProps {
   mode: "edit";
   child: Child;
 }
 
 export type UpdateChildForm = CreateChildForm | EditChildForm;
 
-export default function UpdateChildForm({ mode, child }: UpdateChildForm) {
+export default function UpdateChildForm({
+  mode,
+  child,
+  onSuccess = () => {},
+  successRedirectPath,
+}: UpdateChildForm) {
   const { submit, loading } = useUpdateChild(mode);
-  const [state, setState] = useState<State>("form");
   const [error, setError] = useState<string | undefined>(undefined);
+  const router = useRouter();
 
   const schema = mode === "create" ? registerChildSchema : updateChildSchema;
 
@@ -56,21 +64,24 @@ export default function UpdateChildForm({ mode, child }: UpdateChildForm) {
     defaultValues: child ?? creationDefaultValues,
   });
 
-  async function onSubmit(values: z.infer<typeof schema>) {
-    try {
-      await submit(values);
-      form.reset();
-      setState("success");
-    } catch (error) {
-      setState("form");
-      setError(
-        String(error) ?? "There was an unexpected error. Try again later."
-      );
+  async function handleSuccess(c: Child) {
+    onSuccess(c);
+
+    if (successRedirectPath) {
+      router.push(successRedirectPath);
     }
   }
 
-  if (state === "success") {
-    return <SuccessScreen />;
+  async function onSubmit(values: z.infer<typeof schema>) {
+    try {
+      const child = await submit(values);
+      form.reset();
+      handleSuccess(child);
+    } catch (error) {
+      setError(
+        String(error) ?? "There was an unexpected error. Try again later.",
+      );
+    }
   }
 
   return (
@@ -131,7 +142,7 @@ export default function UpdateChildForm({ mode, child }: UpdateChildForm) {
                   }
                   onChange={(e) =>
                     field.onChange(
-                      e.target.value ? new Date(e.target.value) : undefined
+                      e.target.value ? new Date(e.target.value) : undefined,
                     )
                   }
                 />

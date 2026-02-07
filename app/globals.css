@@ -134,7 +134,7 @@ h1 {
   /* ~40px */
   font-weight: 700;
   line-height: 1.2;
-  margin-bottom: 0.75rem;
+  margin: 0.75rem 0;
 }
 
 h2 {
@@ -175,4 +175,9 @@ h6 {
   font-weight: 500;
   line-height: 1.4;
   margin-bottom: 0.3rem;
+}
+
+.admin-page {
+  padding: 32px;
+  padding-top: 48px;
 }
